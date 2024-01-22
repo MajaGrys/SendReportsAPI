@@ -10,7 +10,7 @@ const reportSchema = new mongoose.Schema({
         requried: true,
         default: () => Date.now()
     },
-    companyId: {
+    company: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Company',
         required: true

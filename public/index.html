@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SendReportsAPI</title>
+    <style>
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+
+            button {
+                padding: 10px 20px;
+                align-self: center;
+            }
+        }
+
+        ul {
+            list-style: none;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- <form>
+        <label>Company: <input type="text" value="school" disabled /></label>
+        <label>Describe your problem: <textarea rows=3 cols=30></textarea></label>
+        <button type="submit">Submit</button>
+    </form> -->
+
+    <button id="seeReports">See reports</button>
+    <div id="reports"></div>
+
+    <script>
+        // const handleSubmit = (e) => {
+        //     e.preventDefault();
+        //     console.log(e.target.value)
+        // };
+
+        // document.querySelector('form').addEventListener('submit', handleSubmit);
+
+        const seeReports = async () => {
+            fetch('/reports')
+            .then(res => res.json())
+            .then(res => {
+                document.getElementById('reports').innerHTML = '';
+                res.map(report => {
+                    fetch(`/companies/${report.company}`)
+                    .then(res => res.json())
+                    .then(res => {
+                        document.getElementById('reports').innerHTML +=
+                        `<ul>
+                            <li class='company'><b>Company:</b> ${res.name}</li>
+                            <li><b>Description:</b> ${report.description}</li>
+                            <li><b>Date:</b> ${report.date}</li>
+                            <li><b>Status:</b> ${report.status}</li>
+                        </ul>`; })
+                })
+            });
+        };
+
+        document.getElementById('seeReports').addEventListener('click', seeReports);
+
+    </script>
+</body>
+</html>

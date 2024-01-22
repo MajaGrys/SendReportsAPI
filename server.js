@@ -1,11 +1,17 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const path = require('path');
 const mongoose = require('mongoose');
 const Company = require('./models/Company');
 const Report = require('./models/Report');
 
 app.use(express.json()); // middleware for parsing json
+app.use(express.static('public'));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.resolve(_dirname, 'index.html'));
+});
 
 // Get all companies
 app.get('/companies', async (req, res) => {
