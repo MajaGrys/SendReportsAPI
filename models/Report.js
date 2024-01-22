@@ -18,7 +18,7 @@ const reportSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true,
-        default: 'sent'
+        default: 'wysłane'
     }
 });
 

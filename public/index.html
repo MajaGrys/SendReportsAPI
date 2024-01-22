@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,13 +37,13 @@
 </head>
 <body>
     <form>
-        <label>Company: school</label>
-        <label>Describe your problem: <textarea name="description" rows=3 cols=30 minlength="5"></textarea></label>
-        <button type="submit">Submit</button>
+        <label>Firma: szkoła</label>
+        <label>Opisz swój problem: <textarea name="description" rows=3 cols=30 minlength="10" placeholder="Min. 10 znaków"></textarea></label>
+        <button type="submit">Wyślij</button>
     </form>
-    <div id="success" class="hidden">Report has been sent</div>
+    <div id="success" class="hidden">Zgłoszenie został wysłany</div>
 
-    <button id="seeReports">See reports</button>
+    <button id="seeReports">Zobacz zgłoszenia</button>
     <div id="reports"></div>
 
     <script>
@@ -51,16 +51,19 @@
             e.preventDefault();
             const company = '65ae6130584fb28db3960533';
             const description = e.target.elements.description.value;
-            fetch('/reports', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ description: description, company: company})})
-            
-            document.getElementById('success').classList.remove('hidden');
 
-            setTimeout(() => {
-                document.getElementById('success').classList.add('hidden');
-            }, 5000)
+            if (description.length > 10) {
+                fetch('/reports', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ description: description, company: company})})
+                
+                document.getElementById('success').classList.remove('hidden');
+
+                setTimeout(() => {
+                    document.getElementById('success').classList.add('hidden');
+                }, 5000)
+            }
         };
 
         document.querySelector('form').addEventListener('submit', handleSubmit);
@@ -76,9 +79,9 @@
                     .then(res => {
                         document.getElementById('reports').innerHTML +=
                         `<ul>
-                            <li class='company'><b>Company:</b> ${res.name}</li>
-                            <li><b>Description:</b> ${report.description}</li>
-                            <li><b>Date:</b> ${report.date}</li>
+                            <li class='company'><b>Firma:</b> ${res.name}</li>
+                            <li><b>Opis problemu:</b> ${report.description}</li>
+                            <li><b>Data:</b> ${report.date}</li>
                             <li><b>Status:</b> ${report.status}</li>
                         </ul>`; })
                 })
