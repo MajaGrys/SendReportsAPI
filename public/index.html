@@ -20,25 +20,50 @@
             list-style: none;
             line-height: 1.5;
         }
+
+        #success {
+            position: fixed;
+            width: 90vw;
+            top: 5vh;
+            padding: 30px;
+            border-radius: 20px;
+            background-color: #67d167;
+        }
+
+        .hidden {
+            visibility: hidden;
+        }
     </style>
 </head>
 <body>
-    <!-- <form>
-        <label>Company: <input type="text" value="school" disabled /></label>
-        <label>Describe your problem: <textarea rows=3 cols=30></textarea></label>
+    <form>
+        <label>Company: school</label>
+        <label>Describe your problem: <textarea name="description" rows=3 cols=30 minlength="5"></textarea></label>
         <button type="submit">Submit</button>
-    </form> -->
+    </form>
+    <div id="success" class="hidden">Report has been sent</div>
 
     <button id="seeReports">See reports</button>
     <div id="reports"></div>
 
     <script>
-        // const handleSubmit = (e) => {
-        //     e.preventDefault();
-        //     console.log(e.target.value)
-        // };
+        const handleSubmit = (e) => {
+            e.preventDefault();
+            const company = '65ae6130584fb28db3960533';
+            const description = e.target.elements.description.value;
+            fetch('/reports', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description: description, company: company})})
+            
+            document.getElementById('success').classList.remove('hidden');
 
-        // document.querySelector('form').addEventListener('submit', handleSubmit);
+            setTimeout(() => {
+                document.getElementById('success').classList.add('hidden');
+            }, 5000)
+        };
+
+        document.querySelector('form').addEventListener('submit', handleSubmit);
 
         const seeReports = async () => {
             fetch('/reports')
