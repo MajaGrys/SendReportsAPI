@@ -1,5 +1,5 @@
 {
-  "name": "api_test",
+  "name": "send_reports_api",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
