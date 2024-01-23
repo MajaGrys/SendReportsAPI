@@ -5,15 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SendReportsAPI</title>
     <style>
+        body {
+            display: flex;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .forms {
+            width: 600px;
+        }
+
+        .reportsList {
+            width: 400px;
+            margin: 50px;
+        }
+
         form {
             display: flex;
             flex-direction: column;
             gap: 30px;
+            margin: 50px;
+        }
 
-            button {
-                padding: 10px 20px;
-                align-self: center;
-            }
+        button {
+            padding: 10px 20px;
+            margin: auto;
+        }
+
+        input {
+            padding: 10px;
+            width: 300px;
         }
 
         ul {
@@ -22,12 +43,30 @@
         }
 
         #success {
-            position: fixed;
-            width: 90vw;
-            top: 5vh;
+            position: absolute;
+            width: inherit;
+            bottom: 5vw;
             padding: 30px;
             border-radius: 20px;
             background-color: #67d167;
+        }
+
+        #deleted {
+            position: absolute;
+            width: inherit;
+            bottom: 5vw;
+            padding: 30px;
+            border-radius: 20px;
+            background-color: #f56459;
+        }
+
+        #updated {
+            position: absolute;
+            width: inherit;
+            bottom: 5vw;
+            padding: 30px;
+            border-radius: 20px;
+            background-color: #f0ad4e;
         }
 
         .hidden {
@@ -36,20 +75,49 @@
     </style>
 </head>
 <body>
-    <form>
-        <label>Firma: szkoła</label>
-        <label>Opisz swój problem: <textarea name="description" rows=3 cols=30 minlength="10" placeholder="Min. 10 znaków"></textarea></label>
-        <button type="submit">Wyślij</button>
-    </form>
-    <div id="success" class="hidden">Zgłoszenie został wysłany</div>
+    <div class="forms">
+        <form id="post">
+            <label id="firma"></label>
+            <label>Opisz swój problem: <textarea name="description" rows=5 cols="65" minlength="10" placeholder="Min. 10 znaków"></textarea></label>
+            <button type="submit">Wyślij</button>
+        </form>
+        <div id="success" class="hidden">Zgłoszenie zostało wysłane</div>
 
-    <button id="seeReports">Zobacz zgłoszenia</button>
-    <div id="reports"></div>
+        <form id="delete">
+            <label>Usuń zgłoszenie: <input type="text" name="id" placeholder="Podaj id zgłoszenia"></label>
+            <button type="submit">Usuń</button>
+        </form>
+        <div id="deleted" class="hidden">Zgłoszenie zostało usunięte</div>
+
+        <form id="put">
+            <label>Zmień status: <input type="text" name="id" placeholder="Podaj id zgłoszenia"></label>
+            <label>Wybierz status:
+                <select name="status">
+                    <option value="w trakcie">w trakcie</option>
+                    <option value="rozwiązane">rozwiązane</option>
+                </select>
+            </label>
+            <button type="submit">Zmień status</button>
+        </form>
+        <div id="updated" class="hidden">Status został zmieniony</div>
+    </div>
+
+    <div class="reportsList">
+        <button id="seeReports">Zobacz wszystkie zgłoszenia</button>
+        <div id="reports"></div>
+    </div>
 
     <script>
-        const handleSubmit = (e) => {
+        const company = '65ae6167584fb28db3960535';
+        // szkoła = 65ae6130584fb28db3960533
+        // szpital = 65ae6167584fb28db3960535
+
+        fetch(`/companies/${company}`)
+        .then(res => res.json())
+        .then(res => document.querySelector('#firma').innerHTML += `Firma: ${res.name}`)
+
+        const handlePost = (e) => {
             e.preventDefault();
-            const company = '65ae6130584fb28db3960533';
             const description = e.target.elements.description.value;
 
             if (description.length > 10) {
@@ -66,7 +134,47 @@
             }
         };
 
-        document.querySelector('form').addEventListener('submit', handleSubmit);
+        document.querySelector('#post').addEventListener('submit', handlePost);
+
+        const handleDelete = (e) => {
+            e.preventDefault();
+            const id = e.target.elements.id.value;
+
+            if (id.length > 20) {
+                fetch(`/reports/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }});
+
+                document.getElementById('deleted').classList.remove('hidden');
+
+                setTimeout(() => {
+                    document.getElementById('deleted').classList.add('hidden');
+                }, 5000)
+            }
+        }
+
+        document.querySelector('#delete').addEventListener('submit', handleDelete);
+
+        const handlePut = (e) => {
+            e.preventDefault();
+            const id = e.target.elements.id.value;
+            const status = e.target.elements.status.value;
+
+            if (id.length > 20) {
+                fetch(`/reports/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: status })});
+
+                document.getElementById('updated').classList.remove('hidden');
+
+                setTimeout(() => {
+                    document.getElementById('updated').classList.add('hidden');
+                }, 5000)
+            }
+        }
+
+        document.querySelector('#put').addEventListener('submit', handlePut);
 
         const seeReports = async () => {
             fetch('/reports')
@@ -79,11 +187,13 @@
                     .then(res => {
                         document.getElementById('reports').innerHTML +=
                         `<ul>
+                            <li><b>ID:</b> ${report._id}</li>
                             <li class='company'><b>Firma:</b> ${res.name}</li>
                             <li><b>Opis problemu:</b> ${report.description}</li>
                             <li><b>Data:</b> ${report.date}</li>
                             <li><b>Status:</b> ${report.status}</li>
-                        </ul>`; })
+                        </ul>`;
+                    })
                 })
             });
         };

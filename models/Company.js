@@ -10,12 +10,6 @@ const companySchema = new mongoose.Schema({
         city: String
     },
     phone: Number,
-    // sentReports: [
-    //     {
-    //         type: mongoose.SchemaTypes.ObjectId,
-    //         ref: 'Report'
-    //     }
-    // ]
     //email, password
 });
 
