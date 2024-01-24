@@ -86,13 +86,13 @@
             <label>Opisz swój problem: <textarea name="description" rows=5 cols="65" minlength="10" placeholder="Min. 10 znaków"></textarea></label>
             <button type="submit">Wyślij</button>
         </form>
-        <div id="success" class="hidden">Zgłoszenie zostało wysłane</div>
+        <div id="success" class="hidden">Zgłoszenie zostało wysłane. Lista zostanie odświeżona.</div>
 
         <form id="delete">
             <label>Usuń zgłoszenie: <input type="text" name="id" placeholder="Podaj id zgłoszenia"></label>
             <button type="submit">Usuń</button>
         </form>
-        <div id="deleted" class="hidden">Zgłoszenie zostało usunięte</div>
+        <div id="deleted" class="hidden">Zgłoszenie zostało usunięte. Lista zostanie odświeżona.</div>
 
         <form id="put">
             <label>Zmień status: <input type="text" name="id" placeholder="Podaj id zgłoszenia"></label>
@@ -104,11 +104,11 @@
             </label>
             <button type="submit">Zmień status</button>
         </form>
-        <div id="updated" class="hidden">Status został zmieniony</div>
+        <div id="updated" class="hidden">Status został zmieniony. Lista zostanie odświeżona.</div>
     </div>
 
     <div class="reportsList">
-        <button id="seeReports">Zobacz wszystkie zgłoszenia</button>
+        <h1>Zgłoszenia</h1>
         <div id="reports"></div>
     </div>
 
@@ -136,6 +136,10 @@
                 document.getElementById('success').classList.remove('hidden');
 
                 setTimeout(() => {
+                    seeReports();
+                }, 1000)
+
+                setTimeout(() => {
                     document.getElementById('success').classList.add('hidden');
                 }, 5000)
             }
@@ -158,6 +162,10 @@
                 document.getElementById('deleted').classList.remove('hidden');
 
                 setTimeout(() => {
+                    seeReports();
+                }, 1000)
+
+                setTimeout(() => {
                     document.getElementById('deleted').classList.add('hidden');
                 }, 5000)
             }
@@ -178,8 +186,11 @@
                     body: JSON.stringify({ status: status })});
                 
                 putForm.reset();
-
                 document.getElementById('updated').classList.remove('hidden');
+
+                setTimeout(() => {
+                    seeReports();
+                }, 1000)
 
                 setTimeout(() => {
                     document.getElementById('updated').classList.add('hidden');
@@ -212,7 +223,7 @@
             });
         };
 
-        document.getElementById('seeReports').addEventListener('click', seeReports);
+        seeReports();
     </script>
 </body>
 </html>
