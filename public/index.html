@@ -82,7 +82,12 @@
 <body>
     <div class="forms">
         <form id="post">
-            <label id="firma"></label>
+            <label> Firma:
+                <select name="company">
+                    <option value="65ae6130584fb28db3960533">szkoła</option>
+                    <option value="65ae6167584fb28db3960535">szpital</option>
+                </select>
+            </label>
             <label>Opisz swój problem: <textarea name="description" rows=5 cols="65" minlength="10" placeholder="Min. 10 znaków"></textarea></label>
             <button type="submit">Wyślij</button>
         </form>
@@ -113,16 +118,9 @@
     </div>
 
     <script>
-        const company = '65ae6130584fb28db3960533';
-        // szkoła = 65ae6130584fb28db3960533
-        // szpital = 65ae6167584fb28db3960535
-
-        fetch(`/companies/${company}`)
-        .then(res => res.json())
-        .then(res => document.querySelector('#firma').innerHTML += `Firma: ${res.name}`)
-
         const handlePost = (e) => {
             e.preventDefault();
+            const company = e.target.company.value;
             const description = e.target.elements.description.value;
 
             if (description.length > 10) {
